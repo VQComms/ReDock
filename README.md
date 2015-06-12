@@ -10,13 +10,13 @@ Jetty is a c# wrapper around the docker remote api. It can be used to manage you
 var client = new DockerClient("http://docker.local:2376");
 
 //list all containers
-var allContainers = client.ListContainers().Result;
+var allContainers = await client.ListContainers();
 
 //pull the images
-var statusUpdate = client.CreateImage("mono", "latest").Result;
+var statusUpdate = await client.CreateImage("mono", "latest");
 
 //create the container
-var container = client.CreateContainer(new CreateContainerOptions("mono", true, new [] { 80, 443 })).Result;
+var container = await client.CreateContainer(new CreateContainerOptions("mono", true, new [] { 80, 443 }));
 
 //start the container we just created
 var containerStartResponse = await client.StartContainer(container);
