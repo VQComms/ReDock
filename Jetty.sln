@@ -3,15 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetty", "Src\Jetty\Jetty.csproj", "{99BD27C4-E475-434F-B780-782F769DD48F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{088EDE2A-D5DC-4F5C-A23C-CEF9D3386905}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "samples\HelloWorld\HelloWorld\HelloWorld.csproj", "{420C0048-01AB-4D37-8F61-323B5358D2CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{420C0048-01AB-4D37-8F61-323B5358D2CA}.Debug|x86.ActiveCfg = Debug|x86
+		{420C0048-01AB-4D37-8F61-323B5358D2CA}.Debug|x86.Build.0 = Debug|x86
+		{420C0048-01AB-4D37-8F61-323B5358D2CA}.Release|x86.ActiveCfg = Release|x86
+		{420C0048-01AB-4D37-8F61-323B5358D2CA}.Release|x86.Build.0 = Release|x86
 		{99BD27C4-E475-434F-B780-782F769DD48F}.Debug|x86.ActiveCfg = Debug|x86
 		{99BD27C4-E475-434F-B780-782F769DD48F}.Debug|x86.Build.0 = Debug|x86
 		{99BD27C4-E475-434F-B780-782F769DD48F}.Release|x86.ActiveCfg = Release|x86
 		{99BD27C4-E475-434F-B780-782F769DD48F}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{420C0048-01AB-4D37-8F61-323B5358D2CA} = {088EDE2A-D5DC-4F5C-A23C-CEF9D3386905}
 	EndGlobalSection
 EndGlobal
