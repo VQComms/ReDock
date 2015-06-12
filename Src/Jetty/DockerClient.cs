@@ -40,11 +40,9 @@ namespace Jetty
             {
                 using (var reader = new StreamReader(stream))
                 {
-                    string line = reader.ReadLine();
-                    statusUpdates.AddRange(CreateImageStatusUpdate.FromString(line));
                     while (!reader.EndOfStream)
                     {
-                        line = reader.ReadLine();
+                        var line = reader.ReadLine();
                         statusUpdates.AddRange(CreateImageStatusUpdate.FromString(line));
                     }
                 }
@@ -55,9 +53,15 @@ namespace Jetty
         }
 
 
-        public async Task<IEnumerable<Container>> ListContainers()
+        public async Task<IEnumerable<Container>> ListContainers(bool allContainers = false)
         {
             var request = new RestRequest("/containers/json", Method.GET);
+
+            if (allContainers)
+            {
+                request.AddQueryParameter("all", "1");
+            }
+
             var response = await Client.ExecuteGetTaskAsync<List<Container>>(request);
             return response.Data;
         }
@@ -72,13 +76,13 @@ namespace Jetty
 
         }
 
-        public async Task<StartContainerResult> StartContainer(CreateContainerResult container)
+        public async Task<StartContainerResult> StartContainer(string containerId)
         {
-            var request = new RestRequest(string.Format("/containers/{0}/start", container.Id), Method.POST);
+            var request = new RestRequest(string.Format("/containers/{0}/start", containerId), Method.POST);
             request.AddJsonBody(new object() { });
             var response = await Client.ExecutePostTaskAsync(request);
 
-            return new StartContainerResult(container.Id, response.StatusCode);
+            return new StartContainerResult(containerId, response.StatusCode);
         }
 
         public async Task<StartContainerResult> KillContainer(CreateContainerResult container)

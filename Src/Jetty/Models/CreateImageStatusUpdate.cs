@@ -13,19 +13,22 @@ namespace Jetty
 
         public static IEnumerable<CreateImageStatusUpdate> FromString(string s)
         {
+            var list = new List<CreateImageStatusUpdate>();
             var splitArr = s.Split(new [] { "}{" }, StringSplitOptions.None);
+
             if (splitArr.Count() == 1)
             {
-                JsonConvert.DeserializeObject<CreateImageStatusUpdate>(s);
+                list.Add(JsonConvert.DeserializeObject<CreateImageStatusUpdate>(s));
+                return list;
             }
             else
             {
-                foreach (var item in splitArr.Take(splitArr.Count() -1))
-                {
-                    var statusItem = JsonConvert.DeserializeObject<CreateImageStatusUpdate>(item + "}");
-                    yield return statusItem;
-                }
-                yield return JsonConvert.DeserializeObject<CreateImageStatusUpdate>(splitArr.Last() + "}");
+                s = "[" + s + "]";
+
+                s = s.Replace("}{", "},{");
+
+                var data = JsonConvert.DeserializeObject<List<CreateImageStatusUpdate>>(s);
+                return data;
             }
         }
     }
