@@ -19,7 +19,7 @@ var statusUpdate = await client.CreateImage("mono", "latest");
 var container = await client.CreateContainer(new CreateContainerOptions("mono", true, new [] { 80, 443 }));
 
 //start the container we just created
-var containerStartResponse = await client.StartContainer(container);
+var containerStartResponse = await client.StartContainer(container.Id);
 //test against your docker container
 await client.KillContainer(container);
 ```
