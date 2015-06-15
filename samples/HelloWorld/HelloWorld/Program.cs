@@ -43,12 +43,12 @@ namespace HelloWorld
             Console.WriteLine("Starting hello-world image");
 
             //host : client
-            var PortMappings = new Dictionary<int,int>();
-            PortMappings.Add(80, 80);
-            PortMappings.Add(443, 443);
+            var portMappings = new Dictionary<int,int>();
+            portMappings.Add(80, 80);
+            portMappings.Add(443, 443);
 
             //start the container we just created
-            var containerStartResponse = client.StartContainer(containerId, new ContainerHostConfig(PortMappings)).Result;
+            var containerStartResponse = client.StartContainer(containerId, new ContainerHostConfig(portMappings)).Result;
 
             Console.WriteLine("Press any key to kill it");
 
