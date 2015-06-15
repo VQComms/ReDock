@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Jetty</id>
+    <version>0.1.0</version>
+    <authors>Jonathan Channon, James Humphries</authors>
+    <owners>VQComms</owners>
+    <licenseUrl>https://github.com/VQComms/Jetty/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/VQComms/Jetty</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A C# Docker remote API wrapper</description>
+    <summary>A C# Docker remote API wrapper</summary>
+    <tags>docker, API</tags>
+    <dependencies>
+      <dependency id="RestSharp" version="105.0.1" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="/Src/Jetty/bin/Release/Jetty.dll" target="lib\net45\Jetty.dll" />
+  </files>
+</package>
