@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jetty", "Src\Jetty\Jetty.csproj", "{99BD27C4-E475-434F-B780-782F769DD48F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReDock", "Src\ReDock\ReDock.csproj", "{99BD27C4-E475-434F-B780-782F769DD48F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{088EDE2A-D5DC-4F5C-A23C-CEF9D3386905}"
 EndProject

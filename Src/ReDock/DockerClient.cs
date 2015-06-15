@@ -5,7 +5,7 @@ using System.IO;
 using System;
 using Newtonsoft.Json;
 
-namespace Jetty
+namespace ReDock
 {
     public class DockerClient
     {

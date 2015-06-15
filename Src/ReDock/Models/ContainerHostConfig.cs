@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Jetty
+namespace ReDock
 {
     public class ContainerHostConfig
     {
