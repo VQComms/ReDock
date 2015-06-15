@@ -85,14 +85,14 @@ namespace Jetty
             return new StartContainerResult(containerId, response.StatusCode);
         }
 
-        public async Task<StartContainerResult> KillContainer(CreateContainerResult container)
+        public async Task<StartContainerResult> KillContainer(string containerId)
         {
-            var request = new RestRequest(string.Format("/containers/{0}/kill", container.Id), Method.POST);
+            var request = new RestRequest(string.Format("/containers/{0}/kill", containerId), Method.POST);
 
 
             var response = await Client.ExecutePostTaskAsync(request);
 
-            return new StartContainerResult(container.Id, response.StatusCode);
+            return new StartContainerResult(containerId, response.StatusCode);
         }
 
     }
