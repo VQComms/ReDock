@@ -9,6 +9,7 @@ namespace HelloWorld
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Getting hello-world image");
             string containerId = string.Empty;
 
             //connect to the docker remote
@@ -23,6 +24,8 @@ namespace HelloWorld
                 //Find image locally or pull it - this returns a list of statuses from creating it
                 var data = client.CreateImage("hello-world").Result;
    
+                Console.WriteLine("Downloading hello-world image");
+
                 if (data.Any(x => x.Status == "Download complete"))
                 {
                     //create the container
@@ -35,13 +38,19 @@ namespace HelloWorld
                 containerId = container.Id;  
             }
 
+            Console.WriteLine("Starting hello-world image");
+
             //start the container we just created
             var containerStartResponse = client.StartContainer(containerId).Result;
 
+            Console.WriteLine("Press any key to kill it");
+            Console.ReadKey();
+
+            client.KillContainer(containerId);
+
+            Console.WriteLine("The container is dead as fried chicken!");
             Console.ReadKey();
 
         }
-
-       
     }
 }
