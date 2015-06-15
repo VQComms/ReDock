@@ -18,7 +18,11 @@ namespace ReDock
 
             if (splitArr.Count() == 1)
             {
-                list.Add(JsonConvert.DeserializeObject<CreateImageStatusUpdate>(s));
+                var result = JsonConvert.DeserializeObject<CreateImageStatusUpdate>(s);
+                if (result != null)
+                {
+                    list.Add(result);
+                }
                 return list;
             }
             else
