@@ -10,7 +10,7 @@ namespace HelloWorld
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Getting hello-world image");
+            Console.WriteLine("Finding hello-world image");
             string containerId = string.Empty;
 
             //connect to the docker remote
@@ -43,12 +43,12 @@ namespace HelloWorld
             Console.WriteLine("Starting hello-world image");
 
             //host : client
-            var PortBindings = new Dictionary<int,int>();
-            PortBindings.Add(80, 80);
-            PortBindings.Add(443, 443);
+            var PortMappings = new Dictionary<int,int>();
+            PortMappings.Add(80, 80);
+            PortMappings.Add(443, 443);
 
             //start the container we just created
-            var containerStartResponse = client.StartContainer(containerId, new ContainerHostConfig(PortBindings)).Result;
+            var containerStartResponse = client.StartContainer(containerId, new ContainerHostConfig(PortMappings)).Result;
 
             Console.WriteLine("Press any key to kill it");
 
