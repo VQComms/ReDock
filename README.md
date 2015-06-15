@@ -1,6 +1,6 @@
 #Jetty
 
-Jetty is a c# wrapper around the docker remote api. It can be used to manage your docker host remotely by creating/running/removing images and containers using c#.
+Jetty is a C# wrapper around the docker remote api. It can be used to manage your docker host remotely by creating/running/removing images and containers using c#.
 
 ##Example usage
 
