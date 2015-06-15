@@ -21,6 +21,6 @@ var container = await client.CreateContainer(new CreateContainerOptions("mono", 
 //start the container we just created
 var containerStartResponse = await client.StartContainer(container.Id);
 
-//test against your docker container
+//kill your docker container
 await client.KillContainer(container.Id);
 ```
