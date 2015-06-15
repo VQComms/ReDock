@@ -7,16 +7,12 @@ namespace Jetty
 {
     public class DockerClient
     {
-        private IRestClient Client { get; set; }
-
-        private string Uri { get; set; }
-
         // using the docker remote api https://docs.docker.com/reference/api/docker_remote_api_v1.18/
+        private readonly IRestClient client;
 
         public DockerClient(string Uri)
         {
-            this.Uri = Uri;
-            this.Client = new RestClient(Uri);
+            this.client = new RestClient(Uri);
         }
 
         public async Task<IList<CreateImageStatusUpdate>> CreateImage(string imageName, string tag = null, string registry = null)
@@ -48,10 +44,9 @@ namespace Jetty
                 }
             };
 
-            await Client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
+            await this.client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
             return statusUpdates;
         }
-
 
         public async Task<IEnumerable<Container>> ListContainers(bool allContainers = false)
         {
@@ -62,7 +57,7 @@ namespace Jetty
                 request.AddQueryParameter("all", "1");
             }
 
-            var response = await Client.ExecuteGetTaskAsync<List<Container>>(request);
+            var response = await this.client.ExecuteGetTaskAsync<List<Container>>(request);
             return response.Data;
         }
 
@@ -70,7 +65,7 @@ namespace Jetty
         {
             var request = new RestRequest("/containers/create", Method.POST);
             request.AddJsonBody(options);
-            var response = await Client.ExecutePostTaskAsync<CreateContainerResult>(request);
+            var response = await this.client.ExecutePostTaskAsync<CreateContainerResult>(request);
 
             return response.Data;
 
@@ -80,7 +75,7 @@ namespace Jetty
         {
             var request = new RestRequest(string.Format("/containers/{0}/start", containerId), Method.POST);
             request.AddJsonBody(new object() { });
-            var response = await Client.ExecutePostTaskAsync(request);
+            var response = await this.client.ExecutePostTaskAsync(request);
 
             return new StartContainerResult(containerId, response.StatusCode);
         }
@@ -90,10 +85,9 @@ namespace Jetty
             var request = new RestRequest(string.Format("/containers/{0}/kill", containerId), Method.POST);
 
 
-            var response = await Client.ExecutePostTaskAsync(request);
+            var response = await this.client.ExecutePostTaskAsync(request);
 
             return new StartContainerResult(containerId, response.StatusCode);
         }
-
     }
 }
