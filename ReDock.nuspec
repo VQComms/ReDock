@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Jetty</id>
+    <id>ReDock</id>
     <version>0.1.0</version>
     <authors>Jonathan Channon, James Humphries</authors>
     <owners>VQComms</owners>
-    <licenseUrl>https://github.com/VQComms/Jetty/blob/master/LICENSE.txt</licenseUrl>
-    <projectUrl>https://github.com/VQComms/Jetty</projectUrl>
+    <licenseUrl>https://github.com/VQComms/ReDock/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/VQComms/ReDock</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A C# Docker remote API wrapper</description>
     <summary>A C# Docker remote API wrapper</summary>
@@ -16,6 +16,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="/Src/Jetty/bin/Release/Jetty.dll" target="lib\net45\Jetty.dll" />
+    <file src="/Src/ReDock/bin/Release/ReDock.dll" target="lib\net45\ReDock.dll" />
   </files>
 </package>
