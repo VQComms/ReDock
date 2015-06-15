@@ -50,6 +50,8 @@
     <Compile Include="Models\KillContainerResult.cs" />
     <Compile Include="Models\StartContainerResult.cs" />
     <Compile Include="Models\Container.cs" />
+    <Compile Include="Models\ContainerHostConfig.cs" />
+    <Compile Include="Models\PortMapping.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

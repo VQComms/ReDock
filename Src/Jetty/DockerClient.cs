@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using RestSharp;
 using System.IO;
+using System;
+using Newtonsoft.Json;
 
 namespace Jetty
 {
@@ -43,7 +45,7 @@ namespace Jetty
                     }
                 }
             };
-
+                    
             await this.client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
             return statusUpdates;
         }
@@ -56,8 +58,9 @@ namespace Jetty
             {
                 request.AddQueryParameter("all", "1");
             }
-
+                
             var response = await this.client.ExecuteGetTaskAsync<List<Container>>(request);
+
             return response.Data;
         }
 
@@ -68,13 +71,14 @@ namespace Jetty
             var response = await this.client.ExecutePostTaskAsync<CreateContainerResult>(request);
 
             return response.Data;
-
         }
 
-        public async Task<StartContainerResult> StartContainer(string containerId)
+        public async Task<StartContainerResult> StartContainer(string containerId, ContainerHostConfig config = null)
         {
             var request = new RestRequest(string.Format("/containers/{0}/start", containerId), Method.POST);
-            request.AddJsonBody(new object() { });
+            var body = JsonConvert.SerializeObject(config);
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+
             var response = await this.client.ExecutePostTaskAsync(request);
 
             return new StartContainerResult(containerId, response.StatusCode);
@@ -83,8 +87,6 @@ namespace Jetty
         public async Task<StartContainerResult> KillContainer(string containerId)
         {
             var request = new RestRequest(string.Format("/containers/{0}/kill", containerId), Method.POST);
-
-
             var response = await this.client.ExecutePostTaskAsync(request);
 
             return new StartContainerResult(containerId, response.StatusCode);
