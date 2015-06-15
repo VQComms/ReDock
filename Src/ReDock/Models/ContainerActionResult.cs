@@ -1,4 +1,4 @@
-namespace Jetty
+namespace ReDock
 {
     public abstract class ContainerActionResult
     {

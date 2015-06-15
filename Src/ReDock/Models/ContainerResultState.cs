@@ -1,4 +1,4 @@
-namespace Jetty
+namespace ReDock
 {
     public enum ContainerResultState
     {

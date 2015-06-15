@@ -37,12 +37,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Src\Jetty\Jetty.csproj">
-      <Project>{99BD27C4-E475-434F-B780-782F769DD48F}</Project>
-      <Name>Jetty</Name>
-    </ProjectReference>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="..\..\..\Src\ReDock\ReDock.csproj">
+      <Project>{99BD27C4-E475-434F-B780-782F769DD48F}</Project>
+      <Name>ReDock</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Jetty
+namespace ReDock
 {
     public class PortMapping : List<Dictionary<string,string>>
 	{

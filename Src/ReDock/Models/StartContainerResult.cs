@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Jetty
+namespace ReDock
 {
     public class StartContainerResult : ContainerActionResult
     {
