@@ -61,7 +61,7 @@ namespace ReDock
                 
             var response = await this.client.ExecuteGetTaskAsync<List<Container>>(request);
 
-            return response.Data;
+            return response.Data ?? new List<Container>();
         }
 
         public async Task<CreateContainerResult> CreateContainer(CreateContainerOptions options)
