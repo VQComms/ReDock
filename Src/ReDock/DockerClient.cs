@@ -4,6 +4,7 @@ using RestSharp;
 using System.IO;
 using System;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace ReDock
 {
@@ -17,17 +18,13 @@ namespace ReDock
             this.client = new RestClient(Uri);
         }
 
-        public async Task<IList<CreateImageStatusUpdate>> CreateImage(string imageName, string tag = null, string registry = null)
+        public async Task<CreateImageResult> CreateImage(string imageName, string tag = null)
         {
             var request = new RestRequest("/images/create");
 
             if (!string.IsNullOrEmpty(imageName))
             {
                 request.AddQueryParameter("fromImage", imageName);
-            }
-            if (!string.IsNullOrEmpty(registry))
-            {
-                request.AddQueryParameter("registry", registry);
             }
             if (!string.IsNullOrEmpty(tag))
             {
@@ -47,7 +44,44 @@ namespace ReDock
             };
                     
             await this.client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
-            return statusUpdates;
+
+            return await ParseCreateImageResult(imageName, statusUpdates);
+        }
+
+        private async Task<CreateImageResult> ParseCreateImageResult(string imageName, List<CreateImageStatusUpdate> statusUpdates)
+        {
+            var result = new CreateImageResult();
+            if (statusUpdates.Any(x => x.Status == "Download complete"))
+            {
+                result.State = CreateImageResultState.Created;
+            }
+            else if (statusUpdates.Any(x => x.Status.Contains("Image is up to date")))
+            {
+                result.State = CreateImageResultState.AlreadyExists;
+            }
+            else
+            {
+                //is it safe to assume an error?
+                result.State = CreateImageResultState.Error;
+            }
+
+            result.StatusUpdates = statusUpdates;
+            if (result.State != CreateImageResultState.Error)
+            {
+                //go get the image Id
+                var image = await InspectImage(imageName);
+                result.ImageId = image.Id;
+            }
+            return result;
+        }
+
+        public async Task<ImageInspectResult> InspectImage(string imageName)
+        {
+            var request = new RestRequest(string.Format("/images/{0}/json", imageName));
+
+            var result = await client.ExecuteGetTaskAsync<ImageInspectResult>(request);
+
+            return result.Data;
         }
 
         public async Task<IEnumerable<Container>> ListContainers(bool allContainers = false)

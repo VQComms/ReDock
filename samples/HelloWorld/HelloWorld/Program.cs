@@ -23,15 +23,11 @@ namespace HelloWorld
 
             if (container == null)
             {
-                //Find image locally or pull it - this returns a list of statuses from creating it
                 var data = client.CreateImage("hello-world").Result;
-   
-                Console.WriteLine("Downloading hello-world image");
-
-                if (data.Any(x => x.Status == "Download complete") || data.Any(x => x.Status.Contains("Image is up to date")))
+                if (data.State != CreateImageResultState.Error)
                 {
                     //create the container
-                    var containerResult = client.CreateContainer(new CreateContainerOptions("hello-world", true)).Result;
+                    var containerResult = client.CreateContainer(new CreateContainerOptions(data.ImageId, true)).Result;
                     containerId = containerResult.Id;
                 }
             }

@@ -35,5 +35,10 @@ namespace ReDock
                 return data;
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("[CreateImageStatusUpdate: Id={0}, Status={1}]", Id, Status);
+        }
     }
 }
