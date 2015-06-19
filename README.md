@@ -1,5 +1,6 @@
-#ReDock
+[![Build status](https://ci.appveyor.com/api/projects/status/srwhwk2af60ikakc/branch/master?retina=true&passingText=master)](https://ci.appveyor.com/project/VQCommunications/redock/branch/master)
 
+#ReDock
 ReDock is a C# wrapper around the docker remote API. It can be used to manage your docker host remotely by creating/running/removing images and containers using C#.
 
 ##Example usage
