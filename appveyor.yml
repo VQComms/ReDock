@@ -18,10 +18,12 @@ before_build:
 
 build:
   project: ReDock.sln
-  publish_nuget: true
+  verbosity: minimal
+
+after_build:
+- nuget pack ReDock.nuspec
 
 artifacts:
-  - path: '*.nupkg'
   - path: '**\*.nupkg'
 
 deploy:
