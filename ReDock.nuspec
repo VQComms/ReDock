@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ReDock</id>
-    <version>0.2.0</version>
+    <version>$version$</version>
     <authors>Jonathan Channon, James Humphries</authors>
     <owners>VQComms</owners>
     <licenseUrl>https://github.com/VQComms/ReDock/blob/master/LICENSE.txt</licenseUrl>
