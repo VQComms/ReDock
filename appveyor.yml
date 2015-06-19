@@ -19,12 +19,9 @@ before_build:
 build:
   project: ReDock.sln
   publish_nuget: true
-  publish_nuget_symbols: true
-  verbosity: minimal
 
 artifacts:
-  - path: /Src/ReDock/bin/Release/ReDock.dll
-    name: ReDock.dll
+  - path: ''*.nupkg'
   - path: '**\*.nupkg'
 
 deploy:
