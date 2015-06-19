@@ -9,4 +9,4 @@ $content = $content -replace '\$version\$',$versionStr
 
 $content | Out-File $root\ReDock.compiled.nuspec
 
-& $root\NuGet\NuGet.exe pack $root\ReDock.compiled.nuspec
+& nuget pack $root\ReDock.compiled.nuspec
