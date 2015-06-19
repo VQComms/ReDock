@@ -48,6 +48,21 @@ namespace ReDock
             return await ParseCreateImageResult(imageName, statusUpdates);
         }
 
+        public async Task<RemoveContainerResult> RemoveContainer(string containerId, bool removeVolumes = false, bool force = false)
+        {
+            var request = new RestRequest(string.Format("/containers/{0}", containerId), Method.DELETE);
+            request.AddQueryParameter("v", removeVolumes.ToString());
+            request.AddQueryParameter("force", force.ToString());
+
+            var result = await this.client.ExecuteTaskAsync(request);
+
+            return new RemoveContainerResult()
+            {
+                State = (RemoveContainerResultState)((int)result.StatusCode)
+            };
+
+        }
+
         private async Task<CreateImageResult> ParseCreateImageResult(string imageName, List<CreateImageStatusUpdate> statusUpdates)
         {
             var result = new CreateImageResult();

@@ -75,6 +75,8 @@
     <Compile Include="Models\CreateImageResult.cs" />
     <Compile Include="Models\CreateImageResultState.cs" />
     <Compile Include="ImageInspectResult.cs" />
+    <Compile Include="RemoveContainerResult.cs" />
+    <Compile Include="RemoveContainerResultState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
