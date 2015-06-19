@@ -21,7 +21,7 @@ build:
   publish_nuget: true
 
 artifacts:
-  - path: ''*.nupkg'
+  - path: '*.nupkg'
   - path: '**\*.nupkg'
 
 deploy:
