@@ -31,6 +31,7 @@ namespace ReDock
                 request.AddQueryParameter("tag", tag);
             }
             var statusUpdates = new List<CreateImageStatusUpdate>();
+
             request.ResponseWriter = (stream) =>
             {
                 using (var reader = new StreamReader(stream))
@@ -46,28 +47,6 @@ namespace ReDock
             await this.client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
 
             return await ParseCreateImageResult(imageName, statusUpdates);
-        }
-
-        /// <summary>
-        /// Removes the container.
-        /// </summary>
-        /// <returns>The Result</returns>
-        /// <param name="containerId">Container identifier.</param>
-        /// <param name="removeVolumes">If set to <c>true</c> remove volumes.</param>
-        /// <param name="force">If set to <c>true</c> force will kill and then remove the container</param>
-        public async Task<RemoveContainerResult> RemoveContainer(string containerId, bool removeVolumes = false, bool force = false)
-        {
-            var request = new RestRequest(string.Format("/containers/{0}", containerId), Method.DELETE);
-            request.AddQueryParameter("v", removeVolumes.ToString());
-            request.AddQueryParameter("force", force.ToString());
-
-            var result = await this.client.ExecuteTaskAsync(request);
-
-            return new RemoveContainerResult()
-            {
-                State = (RemoveContainerResultState)((int)result.StatusCode)
-            };
-
         }
 
         private async Task<CreateImageResult> ParseCreateImageResult(string imageName, List<CreateImageStatusUpdate> statusUpdates)
@@ -106,14 +85,22 @@ namespace ReDock
             return result.Data;
         }
 
+        public async Task<IEnumerable<Image>> ListImages(bool allImages = false)
+        {
+            var request = new RestRequest("images/json");
+
+            request.AddQueryParameter("all", allImages.ToString());
+
+            var response = await this.client.ExecuteGetTaskAsync<List<Image>>(request);
+
+            return response.Data ?? new List<Image>();
+        }
+
         public async Task<IEnumerable<Container>> ListContainers(bool allContainers = false)
         {
             var request = new RestRequest("/containers/json", Method.GET);
 
-            if (allContainers)
-            {
-                request.AddQueryParameter("all", "1");
-            }
+            request.AddQueryParameter("all", allContainers.ToString());
                 
             var response = await this.client.ExecuteGetTaskAsync<List<Container>>(request);
 
@@ -146,6 +133,28 @@ namespace ReDock
             var response = await this.client.ExecutePostTaskAsync(request);
 
             return new StartContainerResult(containerId, response.StatusCode);
+        }
+
+
+        /// <summary>
+        /// Removes the container.
+        /// </summary>
+        /// <returns>The Result</returns>
+        /// <param name="containerId">Container identifier.</param>
+        /// <param name="removeVolumes">If set to <c>true</c> remove volumes.</param>
+        /// <param name="force">If set to <c>true</c> force will kill and then remove the container</param>
+        public async Task<RemoveContainerResult> RemoveContainer(string containerId, bool removeVolumes = false, bool force = false)
+        {
+            var request = new RestRequest(string.Format("/containers/{0}", containerId), Method.DELETE);
+            request.AddQueryParameter("v", removeVolumes.ToString());
+            request.AddQueryParameter("force", force.ToString());
+
+            var result = await this.client.ExecuteTaskAsync(request);
+
+            return new RemoveContainerResult()
+            {
+                State = (RemoveContainerResultState)((int)result.StatusCode)
+            };
         }
     }
 }

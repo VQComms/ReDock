@@ -12,10 +12,25 @@ namespace HelloWorld
         {
             Console.WriteLine("Finding hello-world image");
             string containerId = string.Empty;
+            string imageId = string.Empty;
 
             //connect to the docker remote
             var client = new DockerClient("http://docker.local:2376");
           
+            //list all images
+            var allImages = client.ListImages(allImages: true).Result;
+
+            var image = allImages.FirstOrDefault(i => i.RepoTags.Contains("hello-world:latest"));
+
+            if (image == null)
+            {
+                var data = client.CreateImage("hello-world").Result;
+                if (data.State != CreateImageResultState.Error)
+                {
+                    imageId = data.ImageId;
+                }
+            }
+
             //list all containers
             var allContainers = client.ListContainers(allContainers: true).Result;
 
@@ -23,13 +38,9 @@ namespace HelloWorld
 
             if (container == null)
             {
-                var data = client.CreateImage("hello-world").Result;
-                if (data.State != CreateImageResultState.Error)
-                {
-                    //create the container
-                    var containerResult = client.CreateContainer(new CreateContainerOptions(data.ImageId, true)).Result;
-                    containerId = containerResult.Id;
-                }
+                //create the container
+                var containerResult = client.CreateContainer(new CreateContainerOptions(imageId, true)).Result;
+                containerId = containerResult.Id;
             }
             else
             {

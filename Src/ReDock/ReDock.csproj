@@ -74,9 +74,10 @@
     <Compile Include="Models\PortMapping.cs" />
     <Compile Include="Models\CreateImageResult.cs" />
     <Compile Include="Models\CreateImageResultState.cs" />
-    <Compile Include="ImageInspectResult.cs" />
-    <Compile Include="RemoveContainerResult.cs" />
-    <Compile Include="RemoveContainerResultState.cs" />
+    <Compile Include="Models\ImageInspectResult.cs" />
+    <Compile Include="Models\RemoveContainerResult.cs" />
+    <Compile Include="Models\RemoveContainerResultState.cs" />
+    <Compile Include="Models\Image.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

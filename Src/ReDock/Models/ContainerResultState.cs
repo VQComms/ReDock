@@ -2,9 +2,9 @@ namespace ReDock
 {
     public enum ContainerResultState
     {
-        NoError,
-        ContainerAlreadyStarted,
-        NoSuchContainer,
-        ServerError,
+        NoError = 204,
+        ActionAlreadyDone = 304,
+        NoSuchContainer = 404,
+        ServerError = 500,
     }
 }
