@@ -48,6 +48,13 @@ namespace ReDock
             return await ParseCreateImageResult(imageName, statusUpdates);
         }
 
+        /// <summary>
+        /// Removes the container.
+        /// </summary>
+        /// <returns>The Result</returns>
+        /// <param name="containerId">Container identifier.</param>
+        /// <param name="removeVolumes">If set to <c>true</c> remove volumes.</param>
+        /// <param name="force">If set to <c>true</c> force will kill and then remove the container</param>
         public async Task<RemoveContainerResult> RemoveContainer(string containerId, bool removeVolumes = false, bool force = false)
         {
             var request = new RestRequest(string.Format("/containers/{0}", containerId), Method.DELETE);
