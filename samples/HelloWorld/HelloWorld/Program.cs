@@ -53,6 +53,11 @@ namespace HelloWorld
             client.KillContainer(containerId);
 
             Console.WriteLine("The container is dead as fried chicken!");
+
+            Console.WriteLine("We don't want the container anymore, lets remove it");
+
+            var removeContainerResult = client.RemoveContainer(containerId, true, true).Result;
+
             Console.ReadKey();
 
         }
