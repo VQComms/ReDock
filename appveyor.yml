@@ -20,7 +20,6 @@ build:
   project: ReDock.sln
   publish_nuget: true
   publish_nuget_symbols: true
-  include_nuget_references: true
   verbosity: minimal
 
 artifacts:
@@ -32,6 +31,6 @@ deploy:
 - provider: NuGet
   api_key:
     secure: 15QfONSEfo0p8Y0WsN43Lp06VHkaB4CfOaTS9uWlR0NH6QfC2HHN5BfQUT0uzC+l
-  skip_symbols: true
+  skip_symbols: false
   on:
     branch: master
