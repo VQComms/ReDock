@@ -31,7 +31,7 @@ namespace ReDock
                 request.AddQueryParameter("tag", tag);
             }
             var statusUpdates = new List<CreateImageStatusUpdate>();
-
+            var statusErrors = new List<CreateImageStatusError>();
             request.ResponseWriter = (stream) =>
             {
                 using (var reader = new StreamReader(stream))
@@ -39,17 +39,23 @@ namespace ReDock
                     while (!reader.EndOfStream)
                     {
                         var line = reader.ReadLine();
-                        statusUpdates.AddRange(CreateImageStatusUpdate.FromString(line));
+                        var updates = CreateImageStatusUpdate.FromString(line);
+                        if (updates.Any(update => update.IsEmpty()))
+                        {
+                            var errors = CreateImageStatusError.FromString(line);
+                            statusErrors.AddRange(errors.Where(err => !err.IsEmpty()));
+                        }
+                        statusUpdates.AddRange(updates.Where(up => !up.IsEmpty()));
                     }
                 }
             };
                     
             await this.client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
 
-            return await ParseCreateImageResult(imageName, statusUpdates);
+            return await ParseCreateImageResult(imageName, statusUpdates, statusErrors);
         }
 
-        private async Task<CreateImageResult> ParseCreateImageResult(string imageName, List<CreateImageStatusUpdate> statusUpdates)
+        private async Task<CreateImageResult> ParseCreateImageResult(string imageName, List<CreateImageStatusUpdate> statusUpdates, List<CreateImageStatusError> errors)
         {
             var result = new CreateImageResult();
             if (statusUpdates.Any(x => x.Status == "Download complete"))
@@ -60,13 +66,14 @@ namespace ReDock
             {
                 result.State = CreateImageResultState.AlreadyExists;
             }
-            else
+            else if (errors.Any())
             {
                 //is it safe to assume an error?
                 result.State = CreateImageResultState.Error;
             }
 
             result.StatusUpdates = statusUpdates;
+            result.StatusErrors = errors;
             if (result.State != CreateImageResultState.Error)
             {
                 //go get the image Id

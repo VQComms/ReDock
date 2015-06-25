@@ -5,11 +5,17 @@ using Newtonsoft.Json;
 
 namespace ReDock
 {
+
     public class CreateImageStatusUpdate
     {
         public string Id { get; set; }
 
         public string Status { get; set; }
+
+        public bool IsEmpty()
+        {
+            return string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Status);
+        }
 
         public static IEnumerable<CreateImageStatusUpdate> FromString(string s)
         {
@@ -18,6 +24,7 @@ namespace ReDock
 
             if (splitArr.Count() == 1)
             {
+                
                 var result = JsonConvert.DeserializeObject<CreateImageStatusUpdate>(s);
                 if (result != null)
                 {
