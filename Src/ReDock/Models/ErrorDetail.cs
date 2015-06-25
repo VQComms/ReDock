@@ -7,9 +7,9 @@ namespace ReDock
 {
     public class ErrorDetail
     {
-        public int code { get; set; }
+        public int Code { get; set; }
 
-        public string message { get; set; }
+        public string Message { get; set; }
     }
     
 }
