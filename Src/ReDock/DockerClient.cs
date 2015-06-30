@@ -52,10 +52,10 @@ namespace ReDock
                     
             await this.client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
 
-            return await ParseCreateImageResult(imageName, statusUpdates, statusErrors);
+            return await ParseCreateImageResult(imageName, tag, statusUpdates, statusErrors);
         }
 
-        private async Task<CreateImageResult> ParseCreateImageResult(string imageName, List<CreateImageStatusUpdate> statusUpdates, List<CreateImageStatusError> errors)
+        private async Task<CreateImageResult> ParseCreateImageResult(string imageName, string tag, List<CreateImageStatusUpdate> statusUpdates, List<CreateImageStatusError> errors)
         {
             var result = new CreateImageResult();
             if (statusUpdates.Any(x => x.Status == "Download complete"))
@@ -77,14 +77,19 @@ namespace ReDock
             if (result.State != CreateImageResultState.Error)
             {
                 //go get the image Id
-                var image = await InspectImage(imageName);
+                var image = await InspectImage(imageName, tag);
                 result.ImageId = image.Id;
             }
             return result;
         }
 
-        public async Task<ImageInspectResult> InspectImage(string imageName)
+        public async Task<ImageInspectResult> InspectImage(string imageName, string tag = null)
         {
+            if (tag == null)
+            {
+                tag = "latest";
+            }
+            imageName = imageName + ":" + tag;
             var request = new RestRequest(string.Format("/images/{0}/json", imageName));
 
             var result = await client.ExecuteGetTaskAsync<ImageInspectResult>(request);
