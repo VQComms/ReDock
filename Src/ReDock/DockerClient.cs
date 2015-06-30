@@ -83,7 +83,7 @@ namespace ReDock
             return result;
         }
 
-        public async Task<ImageInspectResult> InspectImage(string imageName, string tag)
+        public async Task<ImageInspectResult> InspectImage(string imageName, string tag = null)
         {
             if (tag == null)
             {
