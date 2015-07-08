@@ -9,11 +9,14 @@ namespace ReDock
         public string Image { get; set; }
         public bool Tty { get; set; }
         public Dictionary<string, object> ExposedPorts { get; set; }
-        public CreateContainerOptions(string imageId, bool tty, IEnumerable<int> ports = null, string containerName = "")
+
+        public HostConfig HostConfig {get;set;}
+        public CreateContainerOptions(string imageId, bool tty, IEnumerable<int> ports = null, string containerName = "", HostConfig hostConfig = null)
         {
             this.ContainerName = containerName;
             this.Image = imageId;
             this.Tty = tty;
+            this.HostConfig = hostConfig;
             ExposedPorts = new Dictionary<string,object>();
             if (ports != null)
             {
