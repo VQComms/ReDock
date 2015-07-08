@@ -7,7 +7,7 @@ namespace ReDock
 
     public class HostConfig
     {
-        public List<string> Binds { get; set; }
+        public readonly List<string> Binds;
 
         public HostConfig(IEnumerable<string> binds)
         {

@@ -5,12 +5,12 @@ namespace ReDock
 {
     public class CreateContainerOptions
     {
-        public string ContainerName { get; set; }
-        public string Image { get; set; }
-        public bool Tty { get; set; }
-        public Dictionary<string, object> ExposedPorts { get; set; }
+        public readonly string ContainerName;
+        public readonly string Image;
+        public readonly bool Tty;
+        public readonly Dictionary<string, object> ExposedPorts;
 
-        public HostConfig HostConfig {get;set;}
+        public readonly HostConfig HostConfig;
         public CreateContainerOptions(string imageId, bool tty, IEnumerable<int> ports = null, string containerName = "", HostConfig hostConfig = null)
         {
             this.ContainerName = containerName;
