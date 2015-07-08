@@ -30,6 +30,10 @@ namespace HelloWorld
                     imageId = data.ImageId;
                 }
             }
+            else
+            {
+                imageId = image.Id;
+            }
 
             //list all containers
             var allContainers = client.ListContainers(allContainers: true).Result;
@@ -38,8 +42,10 @@ namespace HelloWorld
 
             if (container == null)
             {
+                //bind a volume
+                var hostConfig = new HostConfig(new [] { "/etc/localtime:/etc/localtime:ro" });
                 //create the container
-                var containerResult = client.CreateContainer(new CreateContainerOptions(imageId, true)).Result;
+                var containerResult = client.CreateContainer(new CreateContainerOptions(imageId, true, hostConfig: hostConfig)).Result;
                 containerId = containerResult.Id;
             }
             else

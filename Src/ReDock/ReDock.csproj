@@ -80,6 +80,7 @@
     <Compile Include="Models\Image.cs" />
     <Compile Include="Models\ErrorDetail.cs" />
     <Compile Include="Models\CreateImageStatusError.cs" />
+    <Compile Include="Models\HostConfig.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
