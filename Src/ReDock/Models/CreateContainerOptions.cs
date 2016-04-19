@@ -9,9 +9,10 @@ namespace ReDock
         public readonly string Image;
         public readonly bool Tty;
         public readonly Dictionary<string, object> ExposedPorts;
+        public readonly IList<string> Env;
 
         public readonly HostConfig HostConfig;
-        public CreateContainerOptions(string imageId, bool tty, IEnumerable<int> ports = null, string containerName = "", HostConfig hostConfig = null)
+        public CreateContainerOptions(string imageId, bool tty, IEnumerable<int> ports = null, string containerName = "", HostConfig hostConfig = null, Dictionary<string,string> env = null)
         {
             this.ContainerName = containerName;
             this.Image = imageId;
@@ -23,6 +24,14 @@ namespace ReDock
                 foreach (var item in ports)
                 {
                     ExposedPorts.Add(string.Format("{0}/tcp", item), new object());
+                }
+            }
+            if (env != null)
+            {
+                Env = new List<string>();
+                foreach (var kvp in env)
+                {
+                    Env.Add(string.Format("{0}={1}", kvp.Key, kvp.Value));
                 }
             }
         }
