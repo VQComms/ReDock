@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 
 namespace ReDock
 {
     public class Image
     {
-        public DateTime Created { get; set; }
+        public string Created { get; set; }
 
         public string Id { get; set; }
 

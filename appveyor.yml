@@ -1,32 +1,30 @@
 version: 0.3.4.{build}
 
+configuration:
+- Release
+
 branches:
   only:
     - master
 
-assembly_info:
-  patch: true
-  file: AssemblyInfo.*
-  assembly_version: "{version}"
-  assembly_file_version: "{version}"
-  assembly_informational_version: "{version}"
+# assembly_info:
+#   patch: true
+#   file: AssemblyInfo.*
+#   assembly_version: "{version}"
+#   assembly_file_version: "{version}"
+#   assembly_informational_version: "{version}"
+  
+install: 
+- ps: .\build.ps1 
 
-configuration: Release
-
-before_build:
-  - nuget restore
-
-build:
-  project: ReDock.sln
-  verbosity: minimal
-
-after_test:
- - ps: .\nuget\pack.ps1
+build_script:
+- dotnet restore 
+- dotnet build "src\ReDock" -c release
+- dotnet pack "src\ReDock" -c release -o ./
 
 artifacts:
 - path: ReDock.*.nupkg
   name: redock
-
 
 deploy:
 - provider: NuGet
