@@ -1,56 +1,54 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using RestSharp;
 using System.IO;
 using System;
-using Newtonsoft.Json;
 using System.Linq;
+using System.Net.Http;
 
 namespace ReDock
 {
     public class DockerClient
     {
         // using the docker remote api https://docs.docker.com/reference/api/docker_remote_api_v1.18/
-        private readonly IRestClient client;
-
+        private readonly HttpClient client;
+        
         public DockerClient(string Uri)
         {
-            this.client = new RestClient(Uri);
+            this.client = new HttpClient();
+            this.client.BaseAddress = new Uri(Uri);
         }
 
         public async Task<CreateImageResult> CreateImage(string imageName, string tag = null)
         {
-            var request = new RestRequest("/images/create");
-
+            var queryStringDic = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(imageName))
             {
-                request.AddQueryParameter("fromImage", imageName);
+                queryStringDic.Add("fromImage", imageName);
             }
             if (!string.IsNullOrEmpty(tag))
             {
-                request.AddQueryParameter("tag", tag);
+                queryStringDic.Add("tag", tag);
             }
             var statusUpdates = new List<CreateImageStatusUpdate>();
             var statusErrors = new List<CreateImageStatusError>();
-            request.ResponseWriter = (stream) =>
+          
+            var response = await this.client.PostAsJsonAsync("/images/create" + queryStringDic.ToQueryString(), new {});
+
+            using (var stream = await response.Content.ReadAsStreamAsync())
+            using (var reader = new StreamReader(stream))
             {
-                using (var reader = new StreamReader(stream))
+                while (!reader.EndOfStream)
                 {
-                    while (!reader.EndOfStream)
+                    var line = reader.ReadLine();
+                    var updates = CreateImageStatusUpdate.FromString(line);
+                    if (updates.Any(update => update.IsEmpty()))
                     {
-                        var line = reader.ReadLine();
-                        var updates = CreateImageStatusUpdate.FromString(line);
-                        if (updates.Any(update => update.IsEmpty()))
-                        {
-                            var errors = CreateImageStatusError.FromString(line);
-                            statusErrors.AddRange(errors.Where(err => !err.IsEmpty()));
-                        }
-                        statusUpdates.AddRange(updates.Where(up => !up.IsEmpty()));
+                        var errors = CreateImageStatusError.FromString(line);
+                        statusErrors.AddRange(errors.Where(err => !err.IsEmpty()));
                     }
+                    statusUpdates.AddRange(updates.Where(up => !up.IsEmpty()));
                 }
-            };
-                    
-            await this.client.ExecutePostTaskAsync<List<CreateImageStatusUpdate>>(request);
+            }
 
             return await ParseCreateImageResult(imageName, tag, statusUpdates, statusErrors);
         }
@@ -58,11 +56,11 @@ namespace ReDock
         private async Task<CreateImageResult> ParseCreateImageResult(string imageName, string tag, List<CreateImageStatusUpdate> statusUpdates, List<CreateImageStatusError> errors)
         {
             var result = new CreateImageResult();
-            if (statusUpdates.Any(x => x.Status == "Download complete"))
+            if (statusUpdates.Any(x => x.status == "Download complete"))
             {
                 result.State = CreateImageResultState.Created;
             }
-            else if (statusUpdates.Any(x => x.Status.Contains("Image is up to date")))
+            else if (statusUpdates.Any(x => x.status.Contains("Image is up to date")))
             {
                 result.State = CreateImageResultState.AlreadyExists;
             }
@@ -76,7 +74,7 @@ namespace ReDock
             result.StatusErrors = errors;
             if (result.State != CreateImageResultState.Error)
             {
-                //go get the image Id
+                //go get the image id
                 var image = await InspectImage(imageName, tag);
                 result.ImageId = image.Id;
             }
@@ -90,60 +88,52 @@ namespace ReDock
                 tag = "latest";
             }
             imageName = imageName + ":" + tag;
-            var request = new RestRequest(string.Format("/images/{0}/json", imageName));
 
-            var result = await client.ExecuteGetTaskAsync<ImageInspectResult>(request);
-
-            return result.Data;
+            var result = await client.GetAsync(string.Format("/images/{0}/json", imageName));
+            return await result.Content.ReadAsJsonAsync<ImageInspectResult>();
         }
 
         public async Task<IEnumerable<Image>> ListImages(bool allImages = false)
         {
-            var request = new RestRequest("images/json");
+            var queryStringDic = new Dictionary<string, string>();
 
-            request.AddQueryParameter("all", allImages.ToString());
+            queryStringDic.Add("all", allImages.ToString());
 
-            var response = await this.client.ExecuteGetTaskAsync<List<Image>>(request);
+            var resp = await this.client.GetAsync("images/json" + queryStringDic.ToQueryString());
 
-            return response.Data ?? new List<Image>();
+            var data = await resp.Content.ReadAsJsonAsync<List<Image>>();
+
+            return data ?? new List<Image>();
         }
 
         public async Task<IEnumerable<Container>> ListContainers(bool allContainers = false)
         {
-            var request = new RestRequest("/containers/json", Method.GET);
+            var queryStringDic = new Dictionary<string, string>();
 
-            request.AddQueryParameter("all", allContainers.ToString());
-                
-            var response = await this.client.ExecuteGetTaskAsync<List<Container>>(request);
+            queryStringDic.Add("all", allContainers.ToString());
 
-            return response.Data ?? new List<Container>();
+            var resp = await this.client.GetAsync("/containers/json" + queryStringDic.ToQueryString());
+
+            var data = await resp.Content.ReadAsJsonAsync<List<Container>>();
+
+            return data ?? new List<Container>();
         }
 
         public async Task<CreateContainerResult> CreateContainer(CreateContainerOptions options)
         {
-            var request = new RestRequest("/containers/create", Method.POST);
-            request.AddJsonBody(options);
-            var response = await this.client.ExecutePostTaskAsync<CreateContainerResult>(request);
-
-            return response.Data;
+            var response = await this.client.PostAsJsonAsync("/containers/create", options);
+            return await response.Content.ReadAsJsonAsync<CreateContainerResult>();
         }
 
-        public async Task<StartContainerResult> StartContainer(string containerId, ContainerHostConfig config = null)
+        public async Task<StartContainerResult> StartContainer(string containerId)
         {
-            var request = new RestRequest(string.Format("/containers/{0}/start", containerId), Method.POST);
-            var body = JsonConvert.SerializeObject(config);
-            request.AddParameter("application/json", body, ParameterType.RequestBody);
-
-            var response = await this.client.ExecutePostTaskAsync(request);
-
+            var response = await this.client.PostAsJsonAsync(string.Format("/containers/{0}/start", containerId), new {});
             return new StartContainerResult(containerId, response.StatusCode);
         }
 
         public async Task<StartContainerResult> KillContainer(string containerId)
         {
-            var request = new RestRequest(string.Format("/containers/{0}/kill", containerId), Method.POST);
-            var response = await this.client.ExecutePostTaskAsync(request);
-
+            var response = await this.client.PostAsJsonAsync(string.Format("/containers/{0}/kill", containerId), new {});
             return new StartContainerResult(containerId, response.StatusCode);
         }
 
@@ -157,15 +147,20 @@ namespace ReDock
         /// <param name="force">If set to <c>true</c> force will kill and then remove the container</param>
         public async Task<RemoveContainerResult> RemoveContainer(string containerId, bool removeVolumes = false, bool force = false)
         {
-            var request = new RestRequest(string.Format("/containers/{0}", containerId), Method.DELETE);
-            request.AddQueryParameter("v", removeVolumes.ToString());
-            request.AddQueryParameter("force", force.ToString());
+            var queryStringDic = new Dictionary<string, string>();
 
-            var result = await this.client.ExecuteTaskAsync(request);
+            var url = string.Format("/containers/{0}", containerId);
+          
+            queryStringDic.Add("v", removeVolumes.ToString());
+            queryStringDic.Add("force", force.ToString());
+
+            url += queryStringDic.ToQueryString();
+
+            var response = await this.client.DeleteAsync(url);
 
             return new RemoveContainerResult()
             {
-                State = (RemoveContainerResultState)((int)result.StatusCode)
+                State = (RemoveContainerResultState)((int)response.StatusCode)
             };
         }
     }

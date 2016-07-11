@@ -8,23 +8,27 @@ namespace HelloWorld
 {
     class MainClass
     {
-        public static void Main(string[] args)
+        public static void Main(string[] args) => new MainClass().Run().Wait();
+
+        public async Task Run()
         {
             Console.WriteLine("Finding hello-world image");
             string containerId = string.Empty;
             string imageId = string.Empty;
 
             //connect to the docker remote
-            var client = new DockerClient("http://docker.local:2376");
-          
+            var client = new DockerClient("http://localhost:2376");
+            
             //list all images
-            var allImages = client.ListImages(allImages: true).Result;
+            var allImages = await client.ListImages(allImages: true);
 
             var image = allImages.FirstOrDefault(i => i.RepoTags.Contains("hello-world:latest"));
 
             if (image == null)
             {
-                var data = client.CreateImage("hello-world").Result;
+                var data = await client.CreateImage("hello-world");
+
+                Console.WriteLine($"{data.StatusErrors.Count} errors, {data.StatusUpdates.Count} status updates");
                 if (data.State != CreateImageResultState.Error)
                 {
                     imageId = data.ImageId;
@@ -36,16 +40,19 @@ namespace HelloWorld
             }
 
             //list all containers
-            var allContainers = client.ListContainers(allContainers: true).Result;
-
+            var allContainers = await client.ListContainers(allContainers: true);
+            
             var container = allContainers.FirstOrDefault(x => x.Image == "hello-world");
-
             if (container == null)
             {
-                //bind a volume
-                var hostConfig = new HostConfig(new [] { "/etc/localtime:/etc/localtime:ro" });
+                //host : client
+                var portBindings = new Dictionary<int,int>();
+                portBindings.Add(80, 80);
+                portBindings.Add(443, 443);
+
                 //create the container
-                var containerResult = client.CreateContainer(new CreateContainerOptions(imageId, true, hostConfig: hostConfig)).Result;
+                var containerResult = await client.CreateContainer(new CreateContainerOptions(imageId, true, 
+                            portBindings: portBindings, bindings:new [] { "/etc/localtime:/etc/localtime:ro"}));
                 containerId = containerResult.Id;
             }
             else
@@ -55,25 +62,21 @@ namespace HelloWorld
  
             Console.WriteLine("Starting hello-world image");
 
-            //host : client
-            var portMappings = new Dictionary<int,int>();
-            portMappings.Add(80, 80);
-            portMappings.Add(443, 443);
-
             //start the container we just created
-            var containerStartResponse = client.StartContainer(containerId, new ContainerHostConfig(portMappings)).Result;
+            var containerStartResponse = await client.StartContainer(containerId);
 
             Console.WriteLine("Press any key to kill it");
 
             Console.ReadKey();
 
-            client.KillContainer(containerId);
+            var killResult = await client.KillContainer(containerId);
+            Console.WriteLine(killResult.Result);
 
             Console.WriteLine("The container is dead as fried chicken!");
 
             Console.WriteLine("We don't want the container anymore, lets remove it");
 
-            var removeContainerResult = client.RemoveContainer(containerId, true, true).Result;
+            var removeContainerResult = await client.RemoveContainer(containerId, true, true);
 
             Console.ReadKey();
 

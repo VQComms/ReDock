@@ -203,3 +203,6 @@ FakesAssemblies/
 bin/
 obj/
 *.userprefs
+
+*.lock.json
+**/.vscode/*

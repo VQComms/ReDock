@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace ReDock
@@ -12,18 +11,18 @@ namespace ReDock
         public readonly IList<string> Env;
 
         public readonly HostConfig HostConfig;
-        public CreateContainerOptions(string imageId, bool tty, IEnumerable<int> ports = null, string containerName = "", HostConfig hostConfig = null, Dictionary<string,string> env = null)
+        public CreateContainerOptions(string imageId, bool tty, string containerName = "", Dictionary<int,int> portBindings = null,bool publishAllPorts = false, IEnumerable<string> bindings = null, Dictionary<string,string> env = null)
         {
             this.ContainerName = containerName;
             this.Image = imageId;
             this.Tty = tty;
-            this.HostConfig = hostConfig;
+            this.HostConfig = new HostConfig(bindings, portBindings, publishAllPorts);
             ExposedPorts = new Dictionary<string,object>();
-            if (ports != null)
+            if (portBindings != null)
             {
-                foreach (var item in ports)
+                foreach (var item in portBindings)
                 {
-                    ExposedPorts.Add(string.Format("{0}/tcp", item), new object());
+                    ExposedPorts.Add(string.Format("{0}/tcp", item.Key), new object());
                 }
             }
             if (env != null)

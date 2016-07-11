@@ -5,16 +5,15 @@ using Newtonsoft.Json;
 
 namespace ReDock
 {
-
     public class CreateImageStatusUpdate
     {
-        public string Id { get; set; }
+        public string id { get; set; }
 
-        public string Status { get; set; }
+        public string status { get; set; }
 
         public bool IsEmpty()
         {
-            return string.IsNullOrEmpty(Status) && string.IsNullOrEmpty(Status);
+            return string.IsNullOrEmpty(status) && string.IsNullOrEmpty(status);
         }
 
         public static IEnumerable<CreateImageStatusUpdate> FromString(string s)
@@ -45,7 +44,7 @@ namespace ReDock
 
         public override string ToString()
         {
-            return string.Format("[CreateImageStatusUpdate: Id={0}, Status={1}]", Id, Status);
+            return string.Format("[CreateImageStatusUpdate: id={0}, status={1}]", id, status);
         }
     }
 }
