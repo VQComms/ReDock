@@ -1,5 +1,18 @@
 {
-    "version": "1.0.0-*",
+    "version": "0.3.4",
+    "authors": [ "Jonathan Channon", "James Humphries" ],
+    "owners" : [ "VQComms" ],
+    "title": "ReDock",
+    "description": "A C# Docker remote API wrapper",
+    "packOptions": {
+        "releaseNotes": "",
+        "owners": [ "VQComms" ],
+        "licenseUrl": "https://github.com/VQComms/ReDock/blob/master/LICENSE.txt",
+        "projectUrl": "https://github.com/VQComms/ReDock/",
+        "requireLicenseAcceptance": false,
+        "summary": "A C# Docker remote API wrapper",
+        "tags": [ "docker", "API" ]
+    },
     "dependencies": {
         "System.Dynamic.Runtime": "4.0.11",
         "System.Linq.Expressions": "4.1.0",
