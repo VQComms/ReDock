@@ -15,7 +15,10 @@ namespace ReDock
 
         public HostConfig(IEnumerable<string> binds, Dictionary<int, int> portBindings, bool publishAllPorts = false)
         {
-            this.Binds = binds.ToList();
+            if (binds != null)
+            {
+                this.Binds = binds.ToList();
+            }
             this.PublishAllPorts = publishAllPorts;
             this.PortBindings = new PortBindingDictionary();
             foreach (var binding in portBindings)
