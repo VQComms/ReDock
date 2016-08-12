@@ -119,9 +119,10 @@ namespace ReDock
             return data ?? new List<Container>();
         }
 
-        public async Task<CreateContainerResult> CreateContainer(CreateContainerOptions options)
+        public async Task<CreateContainerResult> CreateContainer(CreateContainerOptions options, string containerName = "")
         {
-            var response = await this.client.PostAsJsonAsync("/containers/create", options);
+            var requestUrl = String.IsNullOrEmpty(containerName) ? "/containers/create" : "/containers/create?name=" + containerName;
+            var response = await this.client.PostAsJsonAsync(requestUrl, options);
             return await response.Content.ReadAsJsonAsync<CreateContainerResult>();
         }
 
